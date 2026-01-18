@@ -34,12 +34,10 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable()) // APIs غالبًا بتكون stateless
+                .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        // USER & ADMIN يقدروا يقرؤوا (GET)
                         .requestMatchers(HttpMethod.GET, "/api/v0/products/**")
                         .hasAnyRole("USER", "ADMIN")
-                        // التعديلات (POST/PUT/DELETE) → ADMIN فقط
                         .requestMatchers("/api/v0/products/**")
                         .hasRole("ADMIN")
                         .anyRequest().authenticated()

@@ -84,7 +84,6 @@ public class ProductController {
         return ResponseEntity.ok(service.getTotalInventoryValue());
     }
 
-    // ✅ v2: search endpoints
 
     @GetMapping(ProductRoutes.SEARCH_CATEGORY)
     public ResponseEntity<List<ProductResponse>> searchByCategory(@RequestParam String category) {

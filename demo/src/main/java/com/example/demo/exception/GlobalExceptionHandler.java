@@ -40,7 +40,6 @@ public class GlobalExceptionHandler {
                 .body(Map.of("errors", errors));
     }
 
-    // ✅ v2: DB errors (مثلاً unique constraint, FK ...)
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<Map<String, Object>> handleDataIntegrity(DataIntegrityViolationException ex) {
         log.error("DATA_INTEGRITY_ERROR: {}", ex.getMostSpecificCause().getMessage());
