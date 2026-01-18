@@ -7,6 +7,7 @@ import com.example.demo.mapper.ProductMapper;
 import com.example.demo.repository.ProductRepository;
 import com.example.demo.service.ProductService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
@@ -131,7 +132,34 @@ public class ProductServiceImpl implements ProductService {
                 : Sort.by(sortBy).ascending();
 
         Pageable pageable = PageRequest.of(page, size, sort);
-        return repo.findAll(pageable)
-                .map(ProductMapper::toResponse);
+        return repo.findAll(pageable).map(ProductMapper::toResponse);
+    }
+
+
+    @Override
+    public List<ProductResponse> searchByCategory(String category) {
+        return repo.findByCategoryIgnoreCase(category)
+                .stream()
+                .map(ProductMapper::toResponse)
+                .toList();
+    }
+
+    @Override
+    public List<ProductResponse> searchByName(String name) {
+        return repo.findByNameContainingIgnoreCase(name)
+                .stream()
+                .map(ProductMapper::toResponse)
+                .toList();
+    }
+
+    @Override
+    public List<ProductResponse> searchByPriceRange(double minPrice, double maxPrice) {
+        if (minPrice > maxPrice) {
+            throw new InvalidProductException("minPrice cannot be greater than maxPrice");
+        }
+        return repo.findByPriceBetween(minPrice, maxPrice)
+                .stream()
+                .map(ProductMapper::toResponse)
+                .toList();
     }
 }

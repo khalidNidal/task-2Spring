@@ -14,4 +14,8 @@ public final class ProductRoutes {
     public static final String LOW_STOCK = "/low-stock";
     public static final String CATEGORY = "/category/{category}";
     public static final String INVENTORY_VALUE = "/inventory-value";
+
+    public static final String SEARCH_CATEGORY = "/search/category";
+    public static final String SEARCH_NAME = "/search/name";
+    public static final String SEARCH_PRICE_RANGE = "/search/price-range";
 }
