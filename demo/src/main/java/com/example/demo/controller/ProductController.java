@@ -46,7 +46,8 @@ public class ProductController {
     }
 
     @PutMapping(ProductRoutes.ID)
-    public ResponseEntity<ProductResponse> update(@PathVariable Long id, @Valid @RequestBody ProductRequest request) {
+    public ResponseEntity<ProductResponse> update(@PathVariable Long id,
+                                                  @Valid @RequestBody ProductRequest request) {
         return ResponseEntity.ok(service.update(id, request));
     }
 
@@ -57,12 +58,14 @@ public class ProductController {
     }
 
     @PostMapping(ProductRoutes.INCREASE)
-    public ResponseEntity<ProductResponse> increase(@PathVariable Long id, @Valid @RequestBody StockChangeRequest req) {
+    public ResponseEntity<ProductResponse> increase(@PathVariable Long id,
+                                                    @Valid @RequestBody StockChangeRequest req) {
         return ResponseEntity.ok(service.increaseStock(id, req.getAmount()));
     }
 
     @PostMapping(ProductRoutes.DECREASE)
-    public ResponseEntity<ProductResponse> decrease(@PathVariable Long id, @Valid @RequestBody StockChangeRequest req) {
+    public ResponseEntity<ProductResponse> decrease(@PathVariable Long id,
+                                                    @Valid @RequestBody StockChangeRequest req) {
         return ResponseEntity.ok(service.decreaseStock(id, req.getAmount()));
     }
 
@@ -79,5 +82,25 @@ public class ProductController {
     @GetMapping(ProductRoutes.INVENTORY_VALUE)
     public ResponseEntity<InventoryValueResponse> totalValue() {
         return ResponseEntity.ok(service.getTotalInventoryValue());
+    }
+
+    // ✅ v2: search endpoints
+
+    @GetMapping(ProductRoutes.SEARCH_CATEGORY)
+    public ResponseEntity<List<ProductResponse>> searchByCategory(@RequestParam String category) {
+        return ResponseEntity.ok(service.searchByCategory(category));
+    }
+
+    @GetMapping(ProductRoutes.SEARCH_NAME)
+    public ResponseEntity<List<ProductResponse>> searchByName(@RequestParam String name) {
+        return ResponseEntity.ok(service.searchByName(name));
+    }
+
+    @GetMapping(ProductRoutes.SEARCH_PRICE_RANGE)
+    public ResponseEntity<List<ProductResponse>> searchByPriceRange(
+            @RequestParam double min,
+            @RequestParam double max
+    ) {
+        return ResponseEntity.ok(service.searchByPriceRange(min, max));
     }
 }

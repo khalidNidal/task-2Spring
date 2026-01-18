@@ -21,7 +21,9 @@ public class ProductMapper {
                 p.getName(),
                 p.getCategory(),
                 p.getPrice(),
-                p.getQuantity()
+                p.getQuantity(),
+                p.getCreatedAt(),
+                p.getUpdatedAt()
         );
     }
 }

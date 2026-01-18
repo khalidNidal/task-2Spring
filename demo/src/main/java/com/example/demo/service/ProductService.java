@@ -20,4 +20,8 @@ public interface ProductService {
     InventoryValueResponse getTotalInventoryValue();
 
     Page<ProductResponse> getAllPaged(int page, int size, String sortBy, String direction);
+
+    List<ProductResponse> searchByCategory(String category);
+    List<ProductResponse> searchByName(String name);
+    List<ProductResponse> searchByPriceRange(double minPrice, double maxPrice);
 }
