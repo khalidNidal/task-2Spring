@@ -1,29 +1,20 @@
 package com.example.demo.mapper;
 
-import com.example.demo.dto.ProductRequest;
-import com.example.demo.dto.ProductResponse;
+import com.example.demo.dto.ProductRequestDTO;
+import com.example.demo.dto.ProductResponseDTO;
 import com.example.demo.entity.Product;
+import org.mapstruct.Mapper;
 
-public class ProductMapper {
+@Mapper(componentModel = "spring")
+public interface ProductMapper {
 
-    public static Product toEntity(ProductRequest req) {
-        return new Product(
-                req.getName(),
-                req.getCategory(),
-                req.getPrice(),
-                req.getQuantity()
-        );
-    }
+    Product toEntity(ProductRequestDTO req);
 
-    public static ProductResponse toResponse(Product p) {
-        return new ProductResponse(
-                p.getId(),
-                p.getName(),
-                p.getCategory(),
-                p.getPrice(),
-                p.getQuantity(),
-                p.getCreatedAt(),
-                p.getUpdatedAt()
-        );
+    ProductResponseDTO toResponse(Product p);
+
+    java.util.List<ProductResponseDTO> toResponseList(java.util.List<Product> products);
+
+    default java.time.LocalDateTime map(java.time.Instant instant) {
+        return instant == null ? null : java.time.LocalDateTime.ofInstant(instant, java.time.ZoneId.systemDefault());
     }
 }

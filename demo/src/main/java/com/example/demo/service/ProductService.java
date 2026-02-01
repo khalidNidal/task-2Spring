@@ -6,22 +6,22 @@ import org.springframework.data.domain.Page;
 import java.util.List;
 
 public interface ProductService {
-    ProductResponse create(ProductRequest request);
-    List<ProductResponse> getAll();
-    ProductResponse getById(Long id);
-    ProductResponse update(Long id, ProductRequest request);
+    ProductResponseDTO create(ProductRequestDTO request);
+    List<ProductResponseDTO> getAll();
+    ProductResponseDTO getById(Long id);
+    ProductResponseDTO update(Long id, ProductRequestDTO request);
     void delete(Long id);
 
-    ProductResponse increaseStock(Long id, int amount);
-    ProductResponse decreaseStock(Long id, int amount);
+    ProductResponseDTO increaseStock(Long id, int amount);
+    ProductResponseDTO decreaseStock(Long id, int amount);
 
-    List<ProductResponse> getLowStock();
-    List<ProductResponse> getByCategory(String category);
-    InventoryValueResponse getTotalInventoryValue();
+    List<ProductResponseDTO> getLowStock();
+    List<ProductResponseDTO> getByCategory(String category);
+    InventoryValueResponseDTO getTotalInventoryValue();
 
-    Page<ProductResponse> getAllPaged(int page, int size, String sortBy, String direction);
+    Page<ProductResponseDTO> getAllPaged(int page, int size, String sortBy, String direction);
 
-    List<ProductResponse> searchByCategory(String category);
-    List<ProductResponse> searchByName(String name);
-    List<ProductResponse> searchByPriceRange(double minPrice, double maxPrice);
+    List<ProductResponseDTO> searchByCategory(String category);
+    List<ProductResponseDTO> searchByName(String name);
+    List<ProductResponseDTO> searchByPriceRange(double minPrice, double maxPrice);
 }

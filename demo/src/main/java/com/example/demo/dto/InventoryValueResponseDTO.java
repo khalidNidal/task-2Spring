@@ -5,6 +5,6 @@ import lombok.*;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class InventoryValueResponse {
+public class InventoryValueResponseDTO {
     private double totalValue;
 }

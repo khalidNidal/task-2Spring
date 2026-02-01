@@ -2,12 +2,12 @@ package com.example.demo.dto;
 
 import lombok.*;
 
-import java.time.Instant;
+import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProductResponse {
+public class ProductResponseDTO {
 
     private Long id;
     private String name;
@@ -15,6 +15,6 @@ public class ProductResponse {
     private double price;
     private int quantity;
 
-    private Instant createdAt;
-    private Instant updatedAt;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 }

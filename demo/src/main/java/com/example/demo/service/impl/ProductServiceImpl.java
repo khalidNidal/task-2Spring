@@ -7,7 +7,6 @@ import com.example.demo.mapper.ProductMapper;
 import com.example.demo.repository.ProductRepository;
 import com.example.demo.service.ProductService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
@@ -18,37 +17,36 @@ import java.util.List;
 public class ProductServiceImpl implements ProductService {
 
     private final ProductRepository repo;
+    private final ProductMapper productMapper;
 
-    public ProductServiceImpl(ProductRepository repo) {
+    public ProductServiceImpl(ProductRepository repo, ProductMapper productMapper) {
         this.repo = repo;
+        this.productMapper = productMapper;
     }
 
     @Override
-    public ProductResponse create(ProductRequest request) {
-        Product p = ProductMapper.toEntity(request);
+    public ProductResponseDTO create(ProductRequestDTO request) {
+        Product p = productMapper.toEntity(request);
         Product saved = repo.save(p);
         log.info("Product created: id={}, name={}, category={}",
                 saved.getId(), saved.getName(), saved.getCategory());
-        return ProductMapper.toResponse(saved);
+        return productMapper.toResponse(saved);
     }
 
     @Override
-    public List<ProductResponse> getAll() {
-        return repo.findAll()
-                .stream()
-                .map(ProductMapper::toResponse)
-                .toList();
+    public List<ProductResponseDTO> getAll() {
+        return productMapper.toResponseList(repo.findAll());
     }
 
     @Override
-    public ProductResponse getById(Long id) {
+    public ProductResponseDTO getById(Long id) {
         Product p = repo.findById(id)
                 .orElseThrow(() -> new ProductNotFoundException(id));
-        return ProductMapper.toResponse(p);
+        return productMapper.toResponse(p);
     }
 
     @Override
-    public ProductResponse update(Long id, ProductRequest request) {
+    public ProductResponseDTO update(Long id, ProductRequestDTO request) {
         Product p = repo.findById(id)
                 .orElseThrow(() -> new ProductNotFoundException(id));
 
@@ -58,7 +56,7 @@ public class ProductServiceImpl implements ProductService {
         p.setQuantity(request.getQuantity());
 
         Product saved = repo.save(p);
-        return ProductMapper.toResponse(saved);
+        return productMapper.toResponse(saved);
     }
 
     @Override
@@ -69,7 +67,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ProductResponse increaseStock(Long id, int amount) {
+    public ProductResponseDTO increaseStock(Long id, int amount) {
         Product p = repo.findById(id)
                 .orElseThrow(() -> new ProductNotFoundException(id));
 
@@ -77,11 +75,11 @@ public class ProductServiceImpl implements ProductService {
         Product saved = repo.save(p);
         log.info("Stock increased: id={}, +{}, newQty={}",
                 id, amount, saved.getQuantity());
-        return ProductMapper.toResponse(saved);
+        return productMapper.toResponse(saved);
     }
 
     @Override
-    public ProductResponse decreaseStock(Long id, int amount) {
+    public ProductResponseDTO decreaseStock(Long id, int amount) {
         Product p = repo.findById(id)
                 .orElseThrow(() -> new ProductNotFoundException(id));
 
@@ -95,71 +93,62 @@ public class ProductServiceImpl implements ProductService {
         Product saved = repo.save(p);
         log.info("Stock decreased: id={}, -{}, newQty={}",
                 id, amount, saved.getQuantity());
-        return ProductMapper.toResponse(saved);
+        return productMapper.toResponse(saved);
     }
 
     @Override
-    public List<ProductResponse> getLowStock() {
+    public List<ProductResponseDTO> getLowStock() {
         return repo.findAll()
                 .stream()
                 .filter(p -> p.getQuantity() < 5)
-                .map(ProductMapper::toResponse)
+                .map(productMapper::toResponse)
                 .toList();
     }
 
     @Override
-    public List<ProductResponse> getByCategory(String category) {
+    public List<ProductResponseDTO> getByCategory(String category) {
         return repo.findAll()
                 .stream()
                 .filter(p -> p.getCategory().equalsIgnoreCase(category))
-                .map(ProductMapper::toResponse)
+                .map(productMapper::toResponse)
                 .toList();
     }
 
     @Override
-    public InventoryValueResponse getTotalInventoryValue() {
+    public InventoryValueResponseDTO getTotalInventoryValue() {
         double total = repo.findAll()
                 .stream()
                 .mapToDouble(p -> p.getPrice() * p.getQuantity())
                 .sum();
-        return new InventoryValueResponse(total);
+        return new InventoryValueResponseDTO(total);
     }
 
     @Override
-    public Page<ProductResponse> getAllPaged(int page, int size, String sortBy, String direction) {
+    public Page<ProductResponseDTO> getAllPaged(int page, int size, String sortBy, String direction) {
         Sort sort = direction.equalsIgnoreCase("desc")
                 ? Sort.by(sortBy).descending()
                 : Sort.by(sortBy).ascending();
 
         Pageable pageable = PageRequest.of(page, size, sort);
-        return repo.findAll(pageable).map(ProductMapper::toResponse);
+        return repo.findAll(pageable).map(productMapper::toResponse);
     }
 
 
     @Override
-    public List<ProductResponse> searchByCategory(String category) {
-        return repo.findByCategoryIgnoreCase(category)
-                .stream()
-                .map(ProductMapper::toResponse)
-                .toList();
+    public List<ProductResponseDTO> searchByCategory(String category) {
+        return productMapper.toResponseList(repo.findByCategoryIgnoreCase(category));
     }
 
     @Override
-    public List<ProductResponse> searchByName(String name) {
-        return repo.findByNameContainingIgnoreCase(name)
-                .stream()
-                .map(ProductMapper::toResponse)
-                .toList();
+    public List<ProductResponseDTO> searchByName(String name) {
+        return productMapper.toResponseList(repo.findByNameContainingIgnoreCase(name));
     }
 
     @Override
-    public List<ProductResponse> searchByPriceRange(double minPrice, double maxPrice) {
+    public List<ProductResponseDTO> searchByPriceRange(double minPrice, double maxPrice) {
         if (minPrice > maxPrice) {
             throw new InvalidProductException("minPrice cannot be greater than maxPrice");
         }
-        return repo.findByPriceBetween(minPrice, maxPrice)
-                .stream()
-                .map(ProductMapper::toResponse)
-                .toList();
+        return productMapper.toResponseList(repo.findByPriceBetween(minPrice, maxPrice));
     }
 }
