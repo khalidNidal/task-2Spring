@@ -6,7 +6,7 @@ import lombok.*;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class StockChangeRequest {
+public class StockChangeRequestDTO {
 
     @Positive(message = "amount must be > 0")
     private int amount;
